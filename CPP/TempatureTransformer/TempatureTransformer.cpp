@@ -6,6 +6,27 @@
 #include <iostream>
 #include <string>
 
+double KelwinToCelcius(double degrees) = [](double deg) -> double {
+  return deg - 273.15;
+};
+double KelwinToFahrenheit(double degrees) = [](double deg) -> double {
+  return CelciusToFahrenheit(KelwinToCelcius(deg));
+};
+double CelciusToKelwin(double degrees) = [](double deg) -> double {
+  return deg + 273.15;
+};
+}
+;
+double CelciusToFahrenheit(double degrees) = [](double deg) -> double {
+  return (deg * 9.0 / 5.0) + 32.0
+};
+double FahrenheitToKelvin(double degrees) = [](double deg) -> double {
+  return FahrenheitToCelcius(CelciusToKelwin(deg));
+};
+double FahrenheitToCelcius(double degrees) = [](double deg) -> double {
+  return (deg - 32.0) * 5.0 / 9.0;
+};
+
 void decode_argument(std::string tempature_str, double &degrees,
                      char &tempature_symbol) {
   degrees = std::stod(degrees);
@@ -18,13 +39,13 @@ double input_kelwin(double degrees, char tempature_output) {
   switch (tempature_output) {
   case 'k':
   case 'K':
-    break;
+    return degrees;
   case 'c':
   case 'C':
-    break;
+    return KelwinToCelcius(degrees);
   case 'f':
   case 'F':
-    break;
+    return KelwinToFahrenheit(degrees);
   default:
     std::cout << "Incorrect symbol at first argument" << std::endl;
     return -1;
@@ -35,13 +56,13 @@ double input_celcius(double degrees, char tempature_output) {
   switch (tempature_output) {
   case 'k':
   case 'K':
-    break;
+    return CelciusToKelwin(degrees);
   case 'c':
   case 'C':
-    break;
+    return degrees;
   case 'f':
   case 'F':
-    break;
+    return CelciusToFahrenheit(degrees);
   default:
     std::cout << "Incorrect symbol at first argument" << std::endl;
     return -1;
@@ -49,19 +70,16 @@ double input_celcius(double degrees, char tempature_output) {
 }
 double input_fahrenheit(double degrees, char tempature_output) {
 
-  switch (tempature_input) {
+  switch (tempature_output) {
   case 'k':
   case 'K':
-    degrees = input_kelwin(degrees, tempature_output);
-    break;
+    return FahrenheitToKelvin(degrees);
   case 'c':
   case 'C':
-    degrees = input_celcius(degrees, tempature_output);
-    break;
+    return FahrenheitToCelcius(degrees);
   case 'f':
   case 'F':
-    degrees = input_fahrenheit(degrees, tempature_output);
-    break;
+    return degrees;
   default:
     std::cout << "Incorrect symbol at first argument" << std::endl;
     return -1;
