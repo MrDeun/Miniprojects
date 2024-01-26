@@ -6,30 +6,16 @@
 #include <iostream>
 #include <string>
 
-double KelwinToCelcius(double degrees) = [](double deg) -> double {
-  return deg - 273.15;
-};
-double KelwinToFahrenheit(double degrees) = [](double deg) -> double {
-  return CelciusToFahrenheit(KelwinToCelcius(deg));
-};
-double CelciusToKelwin(double degrees) = [](double deg) -> double {
-  return deg + 273.15;
-};
-}
-;
-double CelciusToFahrenheit(double degrees) = [](double deg) -> double {
-  return (deg * 9.0 / 5.0) + 32.0
-};
-double FahrenheitToKelvin(double degrees) = [](double deg) -> double {
-  return FahrenheitToCelcius(CelciusToKelwin(deg));
-};
-double FahrenheitToCelcius(double degrees) = [](double deg) -> double {
-  return (deg - 32.0) * 5.0 / 9.0;
-};
+auto KelwinToCelcius = [](double deg) {return deg - 273.15;};
+auto CelciusToKelwin = [](double deg) {  return deg + 273.15;};
+auto CelciusToFahrenheit = [](double deg){  return (deg * 9.0 / 5.0) + 32.0;};
+auto FahrenheitToCelcius = [](double deg) { return (deg - 32.0) * 5.0 / 9.0; };
+auto KelwinToFahrenheit = [](double deg) { return CelciusToFahrenheit(KelwinToCelcius(deg));};
+auto FahrenheitToKelvin = [](double deg) { return CelciusToKelwin(FahrenheitToCelcius(deg));};
 
 void decode_argument(std::string tempature_str, double &degrees,
                      char &tempature_symbol) {
-  degrees = std::stod(degrees);
+  degrees = std::stod(tempature_str,nullptr);
   tempature_symbol = tempature_str.back();
   return;
 }
@@ -87,7 +73,7 @@ double input_fahrenheit(double degrees, char tempature_output) {
 }
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
+  if (argc != 3) {
     std::cout << "Wrong amount of arguments - "
               << "Number of degress ended with a tempature symbol and a symbol "
                  "of output tempature"
@@ -97,9 +83,11 @@ int main(int argc, char *argv[]) {
   }
 
   double degrees{};
-  char tempature_input{}, tempature_output{};
+  char tempature_input{}, tempature_output{*argv[2]};
 
   decode_argument(argv[1], degrees, tempature_input);
+
+
 
   switch (tempature_input) {
   case 'k':
@@ -118,6 +106,8 @@ int main(int argc, char *argv[]) {
     std::cout << "Incorrect symbol at first argument" << std::endl;
     return -1;
   }
+
+  std::cout << degrees << tempature_output << "\n";
 
   return 0;
 }

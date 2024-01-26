@@ -162,7 +162,7 @@ bool process(std::string line, vector<Task> &tasklist) {
 int main() {
 
   vector<Task> tasklist{};
-  for (string line; cout << "\nTO DO LIST > " && getline(cin, line);) {
+  for (string line; cout << "TO DO LIST > " && getline(cin, line);) {
     if (!line.empty() && process(line, tasklist)) {
       line.clear();
       return 0;
