@@ -22,6 +22,9 @@ bool is_number(const std::string &s)
   return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
 }
 
+void new_task();
+void show_tasks();
+
 void change_title(std::vector<Task>& tasklist, std::queue<std::string>& words,const uint32_t& index)
 {
     if(index > tasklist.size()) // Size Check
@@ -54,6 +57,11 @@ void delete_task(std::vector<Task>& tasklist, uint32_t index)
     return;
 }
 
+void load_tasklist(std::vector<Task>& tasklist, std::string filename);
+void save_tasklist(std::vector<Task>& tasklist, std::string filename);
+void mark_off_task(std::vector<Task>& tasklist, uint32_t index);
+void show_help();
+
 bool process(std::string line, std::vector<Task>& tasklist)
 {
     std::stringstream stream_line {line};
@@ -82,23 +90,34 @@ bool process(std::string line, std::vector<Task>& tasklist)
         case DELETE:
             if( !is_number(words.front()) )
                 {std::cout << "ERROR:Second argument not number!\n";return 0;}
-            uint32_t count = stoi(words.front());
+            uint32_t index = stoi(words.front());
             clear_queue(words);
             delete_task(tasklist,count);
             break;
         case LOAD:
+            std::string filename = words.front() + ".txt";
+            clear_queue(words);
+            load_tasklist(tasklist,filename);
             break;
         case SAVE:
+            std::string filename = words.front() + ".txt";
+            clear_queue(words);
+            save_tasklist(tasklist,filename);
             break;
         case MARKED:
+            if(!is_number(words.front()))
+                {std::cout << "ERROR:Second argument not number!\n";return 0;}
+            uint32_t index = stoi(words.front());
             break;
         case HELP:
+            clear_queue(words);
+            show_help();
             break;
         case EXIT:
             return true;
-
         default:
             std::cout << "ERROR: Unknown command" << std::endl;
+            break;
     }
     
 
