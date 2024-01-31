@@ -11,7 +11,7 @@ enum Command {
   MARKED,
   HELP,
   EXIT,
-};
+}; // 9 States
 
 std::map<std::string, Command> string_to_command{
     {"show", SHOW},     {"new", NEW},   {"delete", DELETE},

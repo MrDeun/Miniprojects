@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <queue>
@@ -21,9 +22,6 @@ bool is_number(const std::string &s)
 {
   return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
 }
-
-void new_task();
-void show_tasks();
 
 void change_title(std::vector<Task>& tasklist, std::queue<std::string>& words,const uint32_t& index)
 {
@@ -57,10 +55,62 @@ void delete_task(std::vector<Task>& tasklist, uint32_t index)
     return;
 }
 
-void load_tasklist(std::vector<Task>& tasklist, std::string filename);
+void new_task(std::vector<Task>& tasklist, std::string task_name)
+{
+    Task new_task{task_name};
+    tasklist.push_back(task_name);
+    return;
+}
+
+void show_tasks(std::vector<Task>& tasklist)
+{
+    uint32_t index = 0;
+    for (auto task_i : tasklist)
+    {
+        std::cout << ++index <<". " << task_i.state() << std::endl; 
+    }
+    return;
+}
+
+void load_tasklist(std::vector<Task>& tasklist, std::string filename)
+{
+    if (!tasklist.empty())
+    {
+        std::cout << "WARNING! Tasklist was already fulfilled! Deleting the list!" << std::endl;
+        tasklist.erase(tasklist.begin(),tasklist.end());
+    }
+
+    std::ofstream file(filename);
+    return;
+    
+}
 void save_tasklist(std::vector<Task>& tasklist, std::string filename);
-void mark_off_task(std::vector<Task>& tasklist, uint32_t index);
-void show_help();
+void mark_task(std::vector<Task>& tasklist, uint32_t index)
+{
+    if(index > tasklist.size())
+    {
+        std::cout << "ERROR! Index bigger than size of tasklist!" << std::endl;
+        return;
+    }
+    tasklist[index].set_done(true);
+
+    return;
+}
+void show_help()
+{
+    std::cout << "show - shows all currently loaded tasks\n"
+              << "new [TITLE] - adds new title to the list\n"
+              << "delete [INDEX] - deletes task from the list\n"
+              << "modify [INDEX] [TITLE] - changes the name of task to another one\n"
+              << "save [FILENAME] - saves current tasklist to the file\n"
+              << "load [FILENAME] - load a new current tasklist, deleting an already existing one in the process\n"
+              << "marked [INDEX] - marks off a task\n"
+              << "help - shows this text\n"
+              << "exit - exits the program\n";
+
+    return;
+
+}
 
 bool process(std::string line, std::vector<Task>& tasklist)
 {
@@ -77,7 +127,6 @@ bool process(std::string line, std::vector<Task>& tasklist)
     words.pop();
     switch(current_command)
     {
-        
         case NEW:
         case SHOW:
         case MODIFY:
@@ -119,10 +168,6 @@ bool process(std::string line, std::vector<Task>& tasklist)
             std::cout << "ERROR: Unknown command" << std::endl;
             break;
     }
-    
-
-
-    
 
     return false;
 }
