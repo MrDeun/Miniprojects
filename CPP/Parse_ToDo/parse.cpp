@@ -18,6 +18,18 @@ void clear_queue(std::queue<std::string>& queue_in)
     return;
 }
 
+std::string extract_words(std::queue<std::string> words)
+{
+    std::string whole;
+    while(!words.empty())
+    {
+        whole.append(words.front());
+        words.pop();
+    }
+    delete &words;
+    return whole;
+}
+
 bool is_number(const std::string &s) 
 {
   return !s.empty() && std::all_of(s.begin(), s.end(), ::isdigit);
@@ -29,15 +41,10 @@ void change_title(std::vector<Task>& tasklist, std::queue<std::string>& words,co
         {
             std::cout << "ERROR: Incorrect index - not enough elements in tasklist" << std::endl;
             while (!words.empty())  words.pop();
+            delete &words;
             return;
         }
-    std::string title = {};
-    while (!words.empty())
-    {
-        title += words.front() + " ";
-        words.pop();
-    }
-    
+    std::string title = extract_words(words);
     tasklist[index].modify_title(title);
     return;
 }
@@ -55,8 +62,15 @@ void delete_task(std::vector<Task>& tasklist, uint32_t index)
     return;
 }
 
-void new_task(std::vector<Task>& tasklist, std::string task_name)
+void new_task(std::vector<Task>& tasklist, std::queue<std::string> words)
 {
+    std::string task_name;
+    while(!words.empty())
+    {
+        task_name.append(words.front());
+        words.pop();
+    }
+    
     Task new_task{task_name};
     tasklist.push_back(task_name);
     return;
@@ -80,7 +94,23 @@ void load_tasklist(std::vector<Task>& tasklist, std::string filename)
         tasklist.erase(tasklist.begin(),tasklist.end());
     }
 
-    std::ofstream file(filename);
+    std::ifstream file(filename);
+    while (file.good())
+    {
+        std::string word;
+        std::string words;
+        do
+        {
+            file >> word;
+            if(!is_number(word))
+                words += word + " ";   
+            else
+                break;
+            word.clear();            
+        } while (is_number(word));
+        
+    }
+    
     return;
     
 }
@@ -128,7 +158,12 @@ bool process(std::string line, std::vector<Task>& tasklist)
     switch(current_command)
     {
         case NEW:
+            new_task(tasklist,words);
+            break;
         case SHOW:
+            delete &words;
+            show_tasks(tasklist);
+            break;
         case MODIFY:
             if (!is_number( words.front() )) 
                 {std::cout << "ERROR:Second argument not number!\n";return 0;}
@@ -151,7 +186,7 @@ bool process(std::string line, std::vector<Task>& tasklist)
         case SAVE:
             std::string filename = words.front() + ".txt";
             clear_queue(words);
-            save_tasklist(tasklist,filename);
+            std::cout << "SAVE FILE NOT IMPLEMENTED YET!" << std::endl;
             break;
         case MARKED:
             if(!is_number(words.front()))
